@@ -4,6 +4,13 @@ import axios from "axios";
 import { ref, onMounted } from "vue";
 
 const users = ref([]);
+const messages = ref([]);
+
+function loadMessages(userId) {
+  axios.get(`api/messages/${userId}`).then((response) => {
+    messages.value = response.data.messages;
+  });
+}
 
 onMounted(() => {
   axios.get("api/users").then((response) => {
@@ -31,6 +38,7 @@ onMounted(() => {
               <li
                 v-for="user in users"
                 :key="user.id"
+                @click="loadMessages(user.id)"
                 class="p-6 text-lg text-gray-600 leading-7 font-semibold border-b border-gray-200 hover:bg-opacity-50 hover:bg-gray-200 hover:cursor-pointer"
               >
                 <p class="flex items-center">
@@ -43,26 +51,27 @@ onMounted(() => {
 
           <div class="w-9/12 flex flex-col justify-between">
             <div class="w-full p-6 flex flex-col overflow-y-scroll">
-              <div class="w-full mb-3 text-right">
+              <div
+                v-for="message in messages"
+                :key="message.id"
+                :class="
+                  message.from === $page.props.auth.user.id ? 'text-right' : ''
+                "
+                class="w-full mb-3"
+              >
                 <p
+                  :class="
+                    message.from === $page.props.auth.user.id
+                      ? 'messageFromMe'
+                      : 'messageToMe'
+                  "
                   class="inline-block p-2 rounded-md messageFromMe"
                   style="max-width: 75%"
                 >
-                  Olá
+                  {{ message.content }}
                 </p>
                 <span class="block mt-1 text-xs text-gray-500">
-                  11/05/2023 23:48
-                </span>
-              </div>
-              <div class="w-full mb-3">
-                <p
-                  class="inline-block p-2 rounded-md messageToMe"
-                  style="max-width: 75%"
-                >
-                  Oi
-                </p>
-                <span class="block mt-1 text-xs text-gray-500">
-                  11/05/2023 23:48
+                  {{ message.created_at }}
                 </span>
               </div>
             </div>
