@@ -5,16 +5,45 @@ import { ref, onMounted } from "vue";
 
 const users = ref([]);
 const messages = ref([]);
-const userActive = ref({});
+const userActive = ref(null);
+const message = ref("");
 
-function loadMessages(userId) {
-  axios.get(`api/users/${userId}`).then((response) => {
+async function loadMessages(userId) {
+  await axios.get(`api/users/${userId}`).then((response) => {
     userActive.value = response.data.user;
   });
 
-  axios.get(`api/messages/${userId}`).then((response) => {
+  await axios.get(`api/messages/${userId}`).then((response) => {
     messages.value = response.data.messages;
   });
+
+  scrollToButton();
+}
+
+async function sendMessage() {
+  await axios
+    .post("api/messages/store", {
+      content: message.value,
+      to: userActive.value.id,
+    })
+    .then((response) => {
+      messages.value.push({
+        from: 1,
+        to: userActive.value.id,
+        content: message.value,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+      message.value = "";
+    });
+
+  scrollToButton();
+}
+
+function scrollToButton() {
+  if (messages.value.length) {
+    document.querySelectorAll(".message:last-child")[0].scrollIntoView();
+  }
 }
 
 onMounted(() => {
@@ -58,7 +87,6 @@ onMounted(() => {
               </li>
             </ul>
           </div>
-
           <div class="w-9/12 flex flex-col justify-between">
             <div class="w-full p-6 flex flex-col overflow-y-scroll">
               <div
@@ -67,7 +95,7 @@ onMounted(() => {
                 :class="
                   message.from === $page.props.auth.user.id ? 'text-right' : ''
                 "
-                class="w-full mb-3"
+                class="w-full mb-3 message"
               >
                 <p
                   :class="
@@ -86,13 +114,15 @@ onMounted(() => {
               </div>
             </div>
             <div
+              v-if="userActive"
               class="w-full bg-gray-200 bg-opacity-25 p-6 border-t border-gray-200"
             >
-              <form>
+              <form v-on:submit.prevent="sendMessage">
                 <div
                   class="flex rounded-md overflow-hidden border border-gray-300"
                 >
                   <input
+                    v-model="message"
                     type="text"
                     class="flex-1 px-4 py-2 text-sm focus:outline-none"
                   />
