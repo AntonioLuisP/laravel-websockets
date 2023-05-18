@@ -5,8 +5,13 @@ import { ref, onMounted } from "vue";
 
 const users = ref([]);
 const messages = ref([]);
+const userActive = ref({});
 
 function loadMessages(userId) {
+  axios.get(`api/users/${userId}`).then((response) => {
+    userActive.value = response.data.user;
+  });
+
   axios.get(`api/messages/${userId}`).then((response) => {
     messages.value = response.data.messages;
   });
@@ -39,6 +44,11 @@ onMounted(() => {
                 v-for="user in users"
                 :key="user.id"
                 @click="loadMessages(user.id)"
+                :class="
+                  userActive && userActive.id === user.id
+                    ? 'bg-gray-200 bg-opacity-50'
+                    : ''
+                "
                 class="p-6 text-lg text-gray-600 leading-7 font-semibold border-b border-gray-200 hover:bg-opacity-50 hover:bg-gray-200 hover:cursor-pointer"
               >
                 <p class="flex items-center">

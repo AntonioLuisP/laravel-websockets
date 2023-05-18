@@ -11,12 +11,18 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-
         $userLogged = auth()->user();
         $users = User::where('id', '!=', $userLogged->id)->get();
 
         return response()->json([
             'users' => $users,
+        ], Response::HTTP_OK);
+    }
+
+    public function show(User $user)
+    {
+        return response()->json([
+            'user' => $user,
         ], Response::HTTP_OK);
     }
 }
