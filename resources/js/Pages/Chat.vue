@@ -71,7 +71,7 @@ onMounted(() => {
                   {{ message.content }}
                 </p>
                 <span class="block mt-1 text-xs text-gray-500">
-                  {{ message.created_at }}
+                  {{ $filters.formatDate(message.created_at) }}
                 </span>
               </div>
             </div>
