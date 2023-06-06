@@ -6,6 +6,8 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import moment from 'moment'
+import Vuex from 'vuex'
+import store from './store';
 
 moment.locale('pt-br');
 
@@ -17,8 +19,10 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         const app = createApp({ render: () => h(App, props) })
             .use(plugin)
-            .use(ZiggyVue, Ziggy);
+            .use(ZiggyVue, Ziggy)
+            .use(Vuex)
 
+        store.dispatch('userStateAction')
         app.config.globalProperties.$filters = {
             formatDate(value) {
                 return moment(value).format('DD/MM/YYYY HH:mm')

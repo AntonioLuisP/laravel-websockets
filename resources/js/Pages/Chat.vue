@@ -1,12 +1,14 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import axios from "axios";
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
+import store from "../store";
 
 const users = ref([]);
 const messages = ref([]);
 const userActive = ref(null);
 const message = ref("");
+const userLogged = computed(() => store.state.user);
 
 async function loadMessages(userId) {
   await axios.get(`api/users/${userId}`).then((response) => {
@@ -28,7 +30,7 @@ async function sendMessage() {
     })
     .then((response) => {
       messages.value.push({
-        from: 1,
+        from: userLogged.id,
         to: userActive.value.id,
         content: message.value,
         created_at: new Date().toISOString(),
