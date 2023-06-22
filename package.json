@@ -21,6 +21,7 @@
     },
     "dependencies": {
         "moment": "^2.29.4",
-        "vuex": "^4.1.0"
+        "vuex": "^4.1.0",
+        "vuex-persistedstate": "^4.1.0"
     }
 }

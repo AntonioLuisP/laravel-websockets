@@ -1,5 +1,7 @@
 import axios from 'axios';
 import Vuex from 'vuex'
+import createPersistedState from 'vuex-persistedstate'
+
 
 export default new Vuex.Store({
     state: {
@@ -15,5 +17,8 @@ export default new Vuex.Store({
                 context.commit('setUserState', userResponse)
             })
         }
-    }
+    },
+    plugins: [
+        createPersistedState()
+    ]
 })

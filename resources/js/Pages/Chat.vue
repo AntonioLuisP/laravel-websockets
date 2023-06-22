@@ -30,7 +30,7 @@ async function sendMessage() {
     })
     .then((response) => {
       messages.value.push({
-        from: userLogged.id,
+        from: userLogged.value.id,
         to: userActive.value.id,
         content: message.value,
         created_at: new Date().toISOString(),
